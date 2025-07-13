@@ -31,7 +31,7 @@ const LandingPage = () => {
         </CardHeader>
         <CardContent className="flex justify-between">
           <Button asChild>
-            <Link href="/login">Get Started</Link>
+            <Link href="/sign-in">Get Started</Link>
           </Button>
           <Image
             src={appLogo}

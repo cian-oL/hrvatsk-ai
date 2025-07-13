@@ -1,10 +1,12 @@
 import { type Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
+import { shadesOfPurple } from "@clerk/themes";
 import { Geist, Geist_Mono } from "next/font/google";
 
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { Toaster } from "sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,7 +29,12 @@ const RootLayout = ({
   children: React.ReactNode;
 }>) => {
   return (
-    <ClerkProvider>
+    <ClerkProvider
+      signInFallbackRedirectUrl={process.env.NEXT_PUBLIC_CLERK_SIGN_IN_URL}
+      signUpFallbackRedirectUrl={process.env.NEXT_PUBLIC_CLERK_SIGN_UP_URL}
+      afterSignOutUrl="/"
+      appearance={{ baseTheme: shadesOfPurple }}
+    >
       <html lang="en">
         <body
           className={`${geistSans.variable} ${geistMono.variable} flex min-h-screen flex-col antialiased`}
@@ -37,6 +44,7 @@ const RootLayout = ({
             {children}
           </main>
           <Footer />
+          <Toaster />
         </body>
       </html>
     </ClerkProvider>
