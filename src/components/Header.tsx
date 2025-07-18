@@ -1,9 +1,10 @@
-import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
+import { SignedIn, SignedOut } from "@clerk/nextjs";
 import Link from "next/link";
 import Image from "next/image";
 
 import appLogo from "@/assets/appLogo.svg";
 import { Button } from "@/components/ui/button";
+import UserDropDownMenu from "@/components/UserDropDownMenu";
 
 const Header = () => {
   return (
@@ -23,7 +24,7 @@ const Header = () => {
             </Button>
           </SignedOut>
           <SignedIn>
-            <UserButton />
+            <UserDropDownMenu />
           </SignedIn>
         </div>
       </div>
