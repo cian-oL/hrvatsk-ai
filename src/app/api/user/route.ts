@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 
-import { db } from "@/lib/db";
+import { db } from "@/lib/db/db";
 
 const ensureUsersTableExists = async () => {
   try {
@@ -25,7 +25,7 @@ const ensureUsersTableExists = async () => {
 
 export const POST = async (req: Request) => {
   try {
-    const { userId: clerkId } = auth();
+    const { userId: clerkId } = await auth();
     if (!clerkId) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
@@ -77,8 +77,82 @@ export const POST = async (req: Request) => {
     });
 
     return NextResponse.json(createdUserQuery.rows[0]);
-  } catch (error) {
-    console.error("[USER_POST]", error);
+  } catch (err) {
+    console.error("[USER_POST]", err);
+    return new NextResponse("Internal Error", { status: 500 });
+  }
+};
+
+export const GET = async (req: Request) => {
+  try {
+    const { userId: clerkId } = await auth();
+    if (!clerkId) {
+      return new NextResponse("Unauthorized", { status: 401 });
+    }
+
+    await ensureUsersTableExists();
+
+    const userQuery = await db.execute({
+      sql: "SELECT * FROM users WHERE clerkId = ?",
+      args: [clerkId],
+    });
+
+    if (userQuery.rows.length === 0) {
+      return new NextResponse("User not found", { status: 404 });
+    }
+
+    return NextResponse.json(userQuery.rows[0]);
+  } catch (err) {
+    console.error("[USER_GET]", err);
+    return new NextResponse("Internal Error", { status: 500 });
+  }
+};
+
+export const PUT = async (req: Request) => {
+  try {
+    const { userId: clerkId } = await auth();
+    if (!clerkId) {
+      return new NextResponse("Unauthorized", { status: 401 });
+    }
+
+    const body = await req.json();
+    const { userName, firstName, lastName } = body;
+
+    await ensureUsersTableExists();
+
+    const userQuery = await db.execute({
+      sql: "SELECT * FROM users WHERE clerkId = ?",
+      args: [clerkId],
+    });
+
+    if (userQuery.rows.length === 0) {
+      return new NextResponse("User not found", { status: 404 });
+    }
+
+    const existingUser = userQuery.rows[0];
+
+    const updatedUser = {
+      ...existingUser,
+      userName: userName || existingUser.userName,
+      firstName: firstName || existingUser.firstName,
+      lastName: lastName || existingUser.lastName,
+      updatedAt: new Date().toISOString(),
+    };
+
+    await db.execute({
+      sql: "UPDATE users SET userName = ?, firstName = ?, lastName = ?, updatedAt = ? WHERE clerkId = ?",
+      args: [
+        updatedUser.userName,
+        updatedUser.firstName,
+        updatedUser.lastName,
+        updatedUser.updatedAt,
+        clerkId,
+      ],
+    });
+
+    return NextResponse.json(updatedUser);
+  } catch (err) {
+    console.error("[USER_PUT]", err);
     return new NextResponse("Internal Error", { status: 500 });
   }
 };
