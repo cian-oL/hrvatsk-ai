@@ -1,5 +1,7 @@
-import landingImage from "@/assets/Miljenko-and-Dobrila.png";
-import appLogo from "@/assets/appLogo.svg";
+import Image from "next/image";
+import Link from "next/link";
+
+import landingImage from "@/../public/Miljenko-and-Dobrila.png";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -8,36 +10,28 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import Image from "next/image";
-import Link from "next/link";
 
 const LandingPage = () => {
   return (
-    <div
-      className="flex h-screen w-full items-center justify-center overflow-hidden"
-      style={{
-        backgroundImage: `url(${landingImage})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
-      }}
-    >
-      <Card className="bg-background w-2/3 -translate-y-32 transform border-b-2 border-blue-400 sm:max-w-100">
+    <div className="flex h-screen w-full flex-col items-center md:justify-center md:bg-[url('/Miljenko-and-Dobrila.png')] md:bg-cover md:bg-center">
+      <Image
+        src={landingImage}
+        alt="An Irish Miljenko and Croatian Dobrila meet outside Kastela"
+        className="max-w-3xl md:hidden"
+      />
+      <Card className="my-4 w-4/5 -translate-y-28 transform justify-center border-b-2 border-blue-400 bg-gray-200/50 sm:max-w-100 md:-translate-y-0">
         <CardHeader>
-          <CardTitle>Welcome to Hrvatsk-AI</CardTitle>
-          <CardDescription>
+          <CardTitle className="font-extrabold text-blue-900">
+            Welcome to Hrvatsk-AI
+          </CardTitle>
+          <CardDescription className="font-semibold text-blue-900 italic">
             Your interactive AI companion to learn Croatian with!
           </CardDescription>
         </CardHeader>
         <CardContent className="flex justify-between">
-          <Button asChild>
+          <Button asChild className="w-full">
             <Link href="/sign-in">Get Started</Link>
           </Button>
-          <Image
-            src={appLogo}
-            alt="App Logo"
-            className="h-16 dark:brightness-100 dark:invert"
-          />
         </CardContent>
       </Card>
     </div>
