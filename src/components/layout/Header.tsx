@@ -3,8 +3,8 @@ import Link from "next/link";
 import Image from "next/image";
 
 import appLogo from "@/assets/appLogo.svg";
-import { Button } from "@/components/ui/button";
-import UserDropDownMenu from "@/components/UserDropDownMenu";
+import { Button } from "@/components/ui/Button";
+import UserDropdownMenu from "@/components/layout/UserDropdownMenu";
 
 const Header = () => {
   return (
@@ -24,7 +24,7 @@ const Header = () => {
             </Button>
           </SignedOut>
           <SignedIn>
-            <UserDropDownMenu />
+            <UserDropdownMenu />
           </SignedIn>
         </div>
       </div>

@@ -1,7 +1,7 @@
 import { SignIn, SignUp, ClerkLoading, ClerkLoaded } from "@clerk/nextjs";
 import Image from "next/image";
 
-import LoadingSpinner from "@/components/ui/loading-spinner";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import landingImage from "@/../public/Miljenko-and-Dobrila.png";
 
 type Props = {

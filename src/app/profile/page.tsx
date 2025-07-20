@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 
 import ProfileForm from "@/components/profile/ProfileForm";
-import LoadingSpinner from "@/components/ui/loading-spinner";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import { useCreateUser, useGetUser, useUpdateUser } from "@/hooks/useUserData";
 
 import type { User } from "@/types/userTypes";

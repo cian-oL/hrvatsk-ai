@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 
 import boatImage from "@/assets/404-boat.svg";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 
 const NotFoundPage = () => {
   return (

@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 
 import constructionCrane from "@/assets/construction-crane.svg";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 
 const UnderConstruction = () => {
   return (
