@@ -10,8 +10,8 @@ type Props = {
 
 const AuthForm = ({ type }: Props) => {
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2">
-      <div className="my-6 flex items-center justify-center">
+    <div className="relative grid min-h-full grid-cols-1 lg:grid-cols-2">
+      <div className="z-10 my-6 flex items-center justify-center">
         <ClerkLoading>
           <LoadingSpinner />
         </ClerkLoading>
@@ -19,11 +19,11 @@ const AuthForm = ({ type }: Props) => {
           {type === "sign-in" ? <SignIn /> : <SignUp />}
         </ClerkLoaded>
       </div>
-      <div className="hidden max-h-screen w-full items-center justify-center lg:flex">
+      <div className="absolute inset-0 z-0 h-full w-full lg:static lg:flex">
         <Image
           src={landingImage}
           alt="Landing image"
-          className="max-h-full w-full object-contain"
+          className="h-full w-full object-cover"
         />
       </div>
     </div>

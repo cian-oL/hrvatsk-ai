@@ -46,9 +46,7 @@ const RootLayout = ({
             className={`${geistSans.variable} ${geistMono.variable} flex min-h-screen flex-col antialiased`}
           >
             <Header />
-            <main className="mx-auto w-full flex-1 items-center justify-center">
-              {children}
-            </main>
+            <main className="mx-auto w-full flex-1">{children}</main>
             <Footer />
             <Toaster />
           </body>
