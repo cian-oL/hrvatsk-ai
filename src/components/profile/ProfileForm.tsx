@@ -2,9 +2,9 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import LoadingSpinner from "@/components/ui/loading-spinner";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
 import {
   Form,
   FormControl,
@@ -13,7 +13,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
+} from "@/components/ui/Form";
 
 import type { User } from "@/types/userTypes";
 
