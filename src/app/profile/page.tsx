@@ -71,7 +71,11 @@ const ProfilePage = () => {
   }, [fromAuthRedirect]);
 
   if (isLoading || !isClerkLoaded) {
-    return <LoadingSpinner />;
+    return (
+      <div className="flex items-center justify-center">
+        <LoadingSpinner />
+      </div>
+    );
   }
 
   return (

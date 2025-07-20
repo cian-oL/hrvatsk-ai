@@ -33,7 +33,11 @@ const AuthRedirectPage = () => {
     }
   }, [isLoaded, clerkUser, createUser, router]);
 
-  return <LoadingSpinner />;
+  return (
+    <div className="flex items-center justify-center">
+      <LoadingSpinner />
+    </div>
+  );
 };
 
 export default AuthRedirectPage;
