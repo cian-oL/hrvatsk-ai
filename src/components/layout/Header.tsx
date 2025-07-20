@@ -9,7 +9,7 @@ import UserDropdownMenu from "@/components/layout/UserDropdownMenu";
 const Header = () => {
   return (
     <header className="bg-background w-full border-b-2 border-blue-400">
-      <div className="container mx-2 flex h-24 items-center justify-between px-2">
+      <div className="container mx-auto flex h-24 items-center justify-between px-2">
         <Link href="/chat">
           <Image src={appLogo} alt="App Logo" height={80} width={100} />
         </Link>
