@@ -1,13 +1,11 @@
 import { type Metadata } from "next";
-import { ClerkProvider } from "@clerk/nextjs";
-import { shadesOfPurple } from "@clerk/themes";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "sonner";
 
 import "./globals.css";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
-import TanstackProvider from "@/providers/TanstackProvider";
+import Providers from "@/providers/Providers";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,29 +28,18 @@ const RootLayout = ({
   children: React.ReactNode;
 }>) => {
   return (
-    <ClerkProvider
-      signInFallbackRedirectUrl={
-        process.env.NEXT_PUBLIC_CLERK_SIGN_IN_FALLBACK_REDIRECT_UR
-      }
-      signUpFallbackRedirectUrl={
-        process.env.NEXT_PUBLIC_CLERK_SIGN_IN_FALLBACK_REDIRECT_UR
-      }
-      afterSignOutUrl="/"
-      appearance={{ baseTheme: shadesOfPurple }}
-    >
-      <TanstackProvider>
-        <html lang="en">
-          <body
-            className={`${geistSans.variable} ${geistMono.variable} flex min-h-screen flex-col antialiased`}
-          >
-            <Header />
-            <main className="mx-auto w-full flex-1">{children}</main>
-            <Footer />
-            <Toaster />
-          </body>
-        </html>
-      </TanstackProvider>
-    </ClerkProvider>
+    <html lang="en" suppressHydrationWarning>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} flex min-h-screen flex-col antialiased`}
+      >
+        <Providers>
+          <Header />
+          <main className="mx-auto w-full flex-1">{children}</main>
+          <Footer />
+          <Toaster />
+        </Providers>
+      </body>
+    </html>
   );
 };
 

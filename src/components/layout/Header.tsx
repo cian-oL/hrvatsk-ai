@@ -5,15 +5,24 @@ import Image from "next/image";
 import appLogo from "@/assets/appLogo.svg";
 import { Button } from "@/components/ui/Button";
 import UserDropdownMenu from "@/components/layout/UserDropdownMenu";
+import ModeToggle from "@/components/layout/ModeToggle";
 
 const Header = () => {
   return (
     <header className="bg-background w-full border-b-2 border-blue-400">
       <div className="container mx-auto flex h-24 items-center justify-between px-2">
         <Link href="/chat">
-          <Image src={appLogo} alt="App Logo" height={80} width={100} />
+          <Image
+            src={appLogo}
+            alt="App Logo"
+            height={80}
+            width={100}
+            className="dark:brightness-100 dark:invert"
+          />
         </Link>
         <div className="flex items-center gap-2">
+          <ModeToggle />
+
           {/* Dynamic rendering from Clerk */}
           <SignedOut>
             <Button asChild>

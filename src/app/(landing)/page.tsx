@@ -21,7 +21,7 @@ const LandingPage = () => {
       />
       <Card className="my-4 w-4/5 -translate-y-28 transform justify-center border-b-2 border-blue-400 bg-gray-200/50 sm:max-w-100 md:-translate-y-0">
         <CardHeader>
-          <CardTitle className="font-extrabold text-blue-900">
+          <CardTitle className="text-primary-foreground font-extrabold">
             Welcome to Hrvatsk-AI
           </CardTitle>
           <CardDescription className="font-semibold text-blue-900 italic">
