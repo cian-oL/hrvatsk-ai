@@ -21,7 +21,7 @@ const UserDropdownMenu = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
-        <CircleUser className="h-8 w-10" />
+        <CircleUser className="text-primary-foreground h-8 w-10" />
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuLabel className="font-extrabold underline">
