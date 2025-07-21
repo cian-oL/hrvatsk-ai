@@ -27,7 +27,7 @@ export const createUser = (formData: Partial<User>): Promise<User> => {
 };
 
 export const getUser = (): Promise<User> => {
-  return fetchWithOptions(`${API_BASE_URL}/user/`, {
+  return fetchWithOptions(`${API_BASE_URL}/user`, {
     method: "GET",
   });
 };

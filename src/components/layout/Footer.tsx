@@ -1,8 +1,7 @@
 import Link from "next/link";
-import Image from "next/image";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 
-import appLogo from "@/assets/appLogo.svg";
+import LogoWithLink from "./LogoWithLink";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -13,13 +12,7 @@ const Footer = () => {
         <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
           <div className="flex flex-col">
             <div className="mb-4">
-              <Link href={"/chat"}>
-                <Image
-                  src={appLogo}
-                  alt="App logo"
-                  className="h-30 w-30 dark:brightness-100 dark:invert"
-                />
-              </Link>
+              <LogoWithLink width={120} height={120} />
             </div>
             <p className="text-sm italic">
               Your interactive AI companion to learn Croatian with!

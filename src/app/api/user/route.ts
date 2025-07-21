@@ -83,7 +83,7 @@ export const POST = async (req: Request) => {
   }
 };
 
-export const GET = async (req: Request) => {
+export const GET = async () => {
   try {
     const { userId: clerkId } = await auth();
     if (!clerkId) {
