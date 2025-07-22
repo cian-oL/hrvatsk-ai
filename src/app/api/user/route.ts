@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 
 import { db } from "@/lib/db/db";
@@ -23,7 +23,7 @@ const ensureUsersTableExists = async () => {
   }
 };
 
-export const POST = async (req: Request) => {
+export const POST = async (req: NextRequest) => {
   try {
     const { userId: clerkId } = await auth();
     if (!clerkId) {
@@ -108,7 +108,7 @@ export const GET = async () => {
   }
 };
 
-export const PUT = async (req: Request) => {
+export const PUT = async (req: NextRequest) => {
   try {
     const { userId: clerkId } = await auth();
     if (!clerkId) {
