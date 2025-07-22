@@ -5,11 +5,11 @@ import { db } from "@/lib/db/db";
 
 export const DELETE = async (
   req: Request,
-  { params }: { params: { userId: string } },
+  { params }: { params: Promise<{ userId: string }> },
 ) => {
   try {
     const { userId: clerkId } = await auth();
-    const { userId } = params;
+    const { userId } = await params;
 
     if (!clerkId) {
       return new NextResponse("Unauthorized", { status: 401 });
