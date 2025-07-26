@@ -5,6 +5,7 @@ export type User = {
   userName?: string | null;
   firstName?: string | null;
   lastName?: string | null;
+  onboardingCompleted?: boolean | false;
   createdAt: string | null;
   updatedAt: string | null;
 };
