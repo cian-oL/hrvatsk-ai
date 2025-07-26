@@ -32,6 +32,10 @@ export const getUser = (): Promise<User> => {
   });
 };
 
+export const getUserByClerkId = (clerkId: string): Promise<User> => {
+  return fetchWithOptions(`${API_BASE_URL}/user/clerk/${clerkId}`);
+};
+
 export const updateUser = (formData: Partial<User>): Promise<User> => {
   return fetchWithOptions(`${API_BASE_URL}/user`, {
     method: "PUT",
