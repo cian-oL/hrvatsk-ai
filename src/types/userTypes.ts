@@ -6,6 +6,13 @@ export type User = {
   firstName?: string | null;
   lastName?: string | null;
   onboardingCompleted?: boolean | false;
+  onboardingQuestions?: OnboardingQuestions;
   createdAt: string | null;
   updatedAt: string | null;
+};
+
+export type OnboardingQuestions = {
+  goal?: string | null;
+  languageLevel?: string | null;
+  commitment?: string | null;
 };

@@ -8,13 +8,15 @@ const ensureUsersTableExists = async () => {
     await db.execute(
       `CREATE TABLE IF NOT EXISTS users (
             id TEXT PRIMARY KEY,
-            clerkId TEXT NOT NULL UNIQUE,
+            clerk_id TEXT NOT NULL UNIQUE,
             email TEXT NOT NULL,
-            userName TEXT,
-            firstName TEXT,
-            lastName TEXT,
-            createdAt TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            updatedAt TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+            user_name TEXT,
+            first_name TEXT,
+            last_name TEXT,
+            onboarding_completed BOOLEAN DEFAULT FALSE,
+            onboarding_questions TEXT,
+            created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
         )`,
     );
   } catch (err) {
@@ -42,7 +44,7 @@ export const POST = async (req: NextRequest) => {
 
     // Check if user already exists
     const existingUserQuery = await db.execute({
-      sql: "SELECT * FROM users WHERE clerkId = ?",
+      sql: "SELECT * FROM users WHERE clerk_id = ?",
       args: [clerkId],
     });
 
@@ -60,7 +62,7 @@ export const POST = async (req: NextRequest) => {
     };
 
     await db.execute({
-      sql: "INSERT INTO users (id, clerkId, email, userName, firstName, lastName) VALUES (?, ?, ?, ?, ?, ?)",
+      sql: "INSERT INTO users (id, clerk_d, email, user_ame, first_name, last_name) VALUES (?, ?, ?, ?, ?, ?)",
       args: [
         newUser.id,
         newUser.clerkId,
@@ -72,7 +74,7 @@ export const POST = async (req: NextRequest) => {
     });
 
     const createdUserQuery = await db.execute({
-      sql: "SELECT * FROM users WHERE clerkId = ?",
+      sql: "SELECT * FROM users WHERE clerk_id = ?",
       args: [clerkId],
     });
 
@@ -93,7 +95,7 @@ export const GET = async () => {
     await ensureUsersTableExists();
 
     const userQuery = await db.execute({
-      sql: "SELECT * FROM users WHERE clerkId = ?",
+      sql: "SELECT * FROM users WHERE clerk_id = ?",
       args: [clerkId],
     });
 
@@ -121,7 +123,7 @@ export const PUT = async (req: NextRequest) => {
     await ensureUsersTableExists();
 
     const userQuery = await db.execute({
-      sql: "SELECT * FROM users WHERE clerkId = ?",
+      sql: "SELECT * FROM users WHERE clerk_id = ?",
       args: [clerkId],
     });
 
@@ -140,7 +142,7 @@ export const PUT = async (req: NextRequest) => {
     };
 
     await db.execute({
-      sql: "UPDATE users SET userName = ?, firstName = ?, lastName = ?, updatedAt = ? WHERE clerkId = ?",
+      sql: "UPDATE users SET user_name = ?, first_name = ?, last_name = ?, updated_at = ? WHERE clerk_id = ?",
       args: [
         updatedUser.userName,
         updatedUser.firstName,
