@@ -33,13 +33,26 @@ export const getUser = (): Promise<User> => {
 };
 
 export const getUserByClerkId = (clerkId: string): Promise<User> => {
-  return fetchWithOptions(`${API_BASE_URL}/user/clerk/${clerkId}`);
+  const encodedClerkId = encodeURIComponent(clerkId);
+  return fetchWithOptions(`${API_BASE_URL}/user/clerk/${encodedClerkId}`);
 };
 
 export const updateUser = (formData: Partial<User>): Promise<User> => {
+  const allowedFields = [
+    "userName",
+    "firstName",
+    "lastName",
+    "onboardingCompleted",
+    "onboardingQuestions",
+  ];
+
+  const filteredData = Object.fromEntries(
+    Object.entries(formData).filter(([key]) => allowedFields.includes(key)),
+  );
+
   return fetchWithOptions(`${API_BASE_URL}/user`, {
-    method: "PUT",
-    body: JSON.stringify(formData),
+    method: "PATCH",
+    body: JSON.stringify(filteredData),
   });
 };
 
