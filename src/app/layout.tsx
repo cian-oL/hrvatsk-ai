@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "sonner";
 
 import "./globals.css";
+import { initializeDatabase } from "@/lib/db/initDb";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import Providers from "@/providers/Providers";
@@ -21,6 +22,15 @@ export const metadata: Metadata = {
   title: "Hrvatsk-AI",
   description: "Chat and learn Croatian",
 };
+
+let hasInitialized = false;
+
+if (typeof window === "undefined" && !hasInitialized) {
+  hasInitialized = true;
+  initializeDatabase().catch((err) =>
+    console.error("Failed to initialize DB:", err),
+  );
+}
 
 const RootLayout = ({
   children,
