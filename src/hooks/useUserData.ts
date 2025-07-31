@@ -1,4 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useAuth } from "@clerk/nextjs";
+
 import {
   createUser,
   deleteUser,
@@ -22,11 +24,14 @@ export const useCreateUser = () => {
 };
 
 export const useGetUser = () => {
+  const { isSignedIn } = useAuth();
+
   return useQuery({
     queryKey: USER_QUERY_KEY,
     queryFn: () => getUser(),
     staleTime: 5 * 60 * 1000, // 5 minutes
     refetchOnWindowFocus: true,
+    enabled: isSignedIn,
   });
 };
 

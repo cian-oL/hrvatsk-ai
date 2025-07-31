@@ -1,0 +1,10 @@
+services:
+  db:
+    image: ghcr.io/tursodatabase/libsql-server:latest
+    container_name: libsql
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./.local_db:/var/lib/libsql
+    environment:
+      - LIBSQLD_DB_PATH=/var/lib/libsql/local.db

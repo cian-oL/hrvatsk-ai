@@ -1,4 +1,6 @@
 import { createClient } from "@libsql/client";
+import { drizzle } from "drizzle-orm/libsql";
+import "dotenv/config";
 
 const url = process.env.TURSO_DATABASE_URL;
 const authToken = process.env.TURSO_AUTH_TOKEN;
@@ -7,11 +9,9 @@ if (!url) {
   throw new Error("Turso database URL cannot be undefined");
 }
 
-if (!authToken) {
-  throw new Error("Turso auth cannot be undefined");
-}
-
-export const db = createClient({
+const client = createClient({
   url,
-  authToken,
+  authToken: authToken !== "none" ? authToken : undefined,
 });
+
+export const db = drizzle(client);

@@ -1,27 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
+import { eq } from "drizzle-orm";
 
 import { db } from "@/lib/db/db";
+import { users } from "@/lib/db/schema";
 
-const ensureUsersTableExists = async () => {
-  try {
-    await db.execute(
-      `CREATE TABLE IF NOT EXISTS users (
-            id TEXT PRIMARY KEY,
-            clerkId TEXT NOT NULL UNIQUE,
-            email TEXT NOT NULL,
-            userName TEXT,
-            firstName TEXT,
-            lastName TEXT,
-            createdAt TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            updatedAt TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
-        )`,
-    );
-  } catch (err) {
-    console.error("Error ensuring users table exists", err);
-    throw new Error("Database schema setup failed");
-  }
-};
+import type { User } from "@/types/userTypes";
 
 export const POST = async (req: NextRequest) => {
   try {
@@ -30,24 +14,21 @@ export const POST = async (req: NextRequest) => {
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    const body = await req.json();
+    const body: Partial<User> = await req.json();
     const { email, userName, firstName, lastName } = body;
 
     if (!email) {
       return new NextResponse("Email is required", { status: 400 });
     }
 
-    // User table check
-    await ensureUsersTableExists();
+    const existingUserQuery = await db
+      .select()
+      .from(users)
+      .where(eq(users.clerkId, clerkId))
+      .limit(1);
 
-    // Check if user already exists
-    const existingUserQuery = await db.execute({
-      sql: "SELECT * FROM users WHERE clerkId = ?",
-      args: [clerkId],
-    });
-
-    if (existingUserQuery.rows.length > 0) {
-      return NextResponse.json(existingUserQuery.rows[0]);
+    if (existingUserQuery.length > 0) {
+      return NextResponse.json(existingUserQuery[0]);
     }
 
     const newUser = {
@@ -59,24 +40,15 @@ export const POST = async (req: NextRequest) => {
       lastName: lastName || null,
     };
 
-    await db.execute({
-      sql: "INSERT INTO users (id, clerkId, email, userName, firstName, lastName) VALUES (?, ?, ?, ?, ?, ?)",
-      args: [
-        newUser.id,
-        newUser.clerkId,
-        newUser.email,
-        newUser.userName,
-        newUser.firstName,
-        newUser.lastName,
-      ],
-    });
+    await db.insert(users).values(newUser);
 
-    const createdUserQuery = await db.execute({
-      sql: "SELECT * FROM users WHERE clerkId = ?",
-      args: [clerkId],
-    });
+    const createdUserQuery = await db
+      .select()
+      .from(users)
+      .where(eq(users.clerkId, clerkId))
+      .limit(1);
 
-    return NextResponse.json(createdUserQuery.rows[0]);
+    return NextResponse.json(createdUserQuery[0]);
   } catch (err) {
     console.error("[USER_POST]", err);
     return new NextResponse("Internal Error", { status: 500 });
@@ -90,69 +62,81 @@ export const GET = async () => {
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    await ensureUsersTableExists();
+    const userQuery = await db
+      .select()
+      .from(users)
+      .where(eq(users.clerkId, clerkId))
+      .limit(1);
 
-    const userQuery = await db.execute({
-      sql: "SELECT * FROM users WHERE clerkId = ?",
-      args: [clerkId],
-    });
-
-    if (userQuery.rows.length === 0) {
+    if (userQuery.length === 0) {
       return new NextResponse("User not found", { status: 404 });
     }
 
-    return NextResponse.json(userQuery.rows[0]);
+    return NextResponse.json(userQuery[0]);
   } catch (err) {
     console.error("[USER_GET]", err);
     return new NextResponse("Internal Error", { status: 500 });
   }
 };
 
-export const PUT = async (req: NextRequest) => {
+export const PATCH = async (req: NextRequest) => {
   try {
     const { userId: clerkId } = await auth();
+
     if (!clerkId) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    const body = await req.json();
-    const { userName, firstName, lastName } = body;
+    const existingUserQuery = await db
+      .select()
+      .from(users)
+      .where(eq(users.clerkId, clerkId))
+      .limit(1);
 
-    await ensureUsersTableExists();
-
-    const userQuery = await db.execute({
-      sql: "SELECT * FROM users WHERE clerkId = ?",
-      args: [clerkId],
-    });
-
-    if (userQuery.rows.length === 0) {
+    if (existingUserQuery.length === 0) {
       return new NextResponse("User not found", { status: 404 });
     }
 
-    const existingUser = userQuery.rows[0];
+    //  Dynamically build the update query -- allow for correct falsy values
+    const allowedUpdateFields = [
+      "userName",
+      "firstName",
+      "lastName",
+      "onboardingCompleted",
+      "onboardingQuestions",
+    ];
 
-    const updatedUser = {
-      ...existingUser,
-      userName: userName || existingUser.userName,
-      firstName: firstName || existingUser.firstName,
-      lastName: lastName || existingUser.lastName,
-      updatedAt: new Date().toISOString(),
-    };
+    const body = await req.json();
+    const updates: any = {};
 
-    await db.execute({
-      sql: "UPDATE users SET userName = ?, firstName = ?, lastName = ?, updatedAt = ? WHERE clerkId = ?",
-      args: [
-        updatedUser.userName,
-        updatedUser.firstName,
-        updatedUser.lastName,
-        updatedUser.updatedAt,
-        clerkId,
-      ],
-    });
+    for (const field of allowedUpdateFields) {
+      if (field in body && body[field] !== undefined) {
+        if (field === "onboardingQuestions") {
+          updates[field] = JSON.stringify(body[field]);
+        } else if (field === "onboardingCompleted") {
+          updates[field] = body[field] ? 1 : 0;
+        } else {
+          updates[field] = body[field];
+        }
+      }
+    }
 
-    return NextResponse.json(updatedUser);
+    if (Object.keys(updates).length === 0) {
+      return new NextResponse("No valid fields to update", { status: 400 });
+    }
+    updates.updatedAt = new Date().toISOString();
+
+    await db.update(users).set(updates).where(eq(users.clerkId, clerkId));
+
+    const updatedUserQuery = await db
+      .select()
+      .from(users)
+      .where(eq(users.clerkId, clerkId))
+      .limit(1);
+
+    return NextResponse.json(updatedUserQuery[0]);
   } catch (err) {
-    console.error("[USER_PUT]", err);
+    console.error("[USER_PATCH]", err);
     return new NextResponse("Internal Error", { status: 500 });
   }
 };
