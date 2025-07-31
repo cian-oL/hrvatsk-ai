@@ -1,11 +1,11 @@
 import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
-import { getUserByClerkId } from "@/lib/api/userApiClient";
+import { getUserByClerkId } from "@/lib/db/userQueries";
 import Onboarding from "@/components/chat/Onboarding";
 import ChatDashboard from "@/components/chat/ChatDashboard";
 
-import type { User } from "@/types/userTypes";
+import type { User, UserQueryResult } from "@/types/userTypes";
 
 const ChatPage = async () => {
   const clerkUser = await currentUser();
@@ -14,17 +14,23 @@ const ChatPage = async () => {
     redirect("/sign-in");
   }
 
-  try {
-    const user: User = await getUserByClerkId(clerkUser.id);
+  const userResult: UserQueryResult = await getUserByClerkId(clerkUser.id);
 
-    if (user.onboardingCompleted) {
-      return <ChatDashboard />;
-    } else {
-      return <Onboarding />;
+  if (!userResult.success) {
+    console.error(userResult.error);
+
+    if (userResult.error === "User not found") {
+      redirect("/profile?error=user-not-found");
     }
-  } catch (err) {
-    console.error("Failed to fetch user data:", err);
-    redirect("/profile?error=user-not-found");
+    redirect("/error?code=user-fetch-failed");
+  }
+
+  const user: User = userResult.data;
+
+  if (user.onboardingCompleted) {
+    return <ChatDashboard />;
+  } else {
+    return <Onboarding />;
   }
 };
 
