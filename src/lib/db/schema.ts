@@ -5,7 +5,7 @@ export const users = sqliteTable("users", {
   id: text("id").primaryKey(),
   clerkId: text("clerk_id").notNull().unique(),
   email: text("email").notNull().unique(),
-  userName: text("user_name"),
+  userName: text("username"),
   firstName: text("first_name"),
   lastName: text("last_name"),
   onboardingCompleted: integer("onboarding_completed").default(0),
@@ -13,7 +13,7 @@ export const users = sqliteTable("users", {
   createdAt: integer("created_at")
     .notNull()
     .default(sql`(CURRENT_TIMESTAMP)`),
-  updatedAt: text("updated_at")
+  updatedAt: integer("updated_at")
     .notNull()
     .default(sql`(CURRENT_TIMESTAMP)`),
 });
