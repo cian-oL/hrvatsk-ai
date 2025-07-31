@@ -32,11 +32,6 @@ export const getUser = (): Promise<User> => {
   });
 };
 
-export const getUserByClerkId = (clerkId: string): Promise<User> => {
-  const encodedClerkId = encodeURIComponent(clerkId);
-  return fetchWithOptions(`${API_BASE_URL}/user/clerk/${encodedClerkId}`);
-};
-
 export const updateUser = (formData: Partial<User>): Promise<User> => {
   const allowedFields = [
     "userName",

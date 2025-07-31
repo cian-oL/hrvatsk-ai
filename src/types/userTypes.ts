@@ -16,3 +16,7 @@ export type OnboardingQuestions = {
   languageLevel?: string | null;
   commitment?: string | null;
 };
+
+export type UserQueryResult =
+  | { success: true; data: User }
+  | { success: false; error: string };
