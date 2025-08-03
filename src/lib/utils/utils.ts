@@ -15,5 +15,6 @@ export const transformClerkData = (clerkUser: UserResource): Partial<User> => {
     firstName: clerkUser.firstName || "",
     lastName: clerkUser.lastName || "",
     userName: clerkUser.username || "",
+    onboardingCompleted: false,
   };
 };
