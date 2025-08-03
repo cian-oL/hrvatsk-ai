@@ -3,11 +3,10 @@ import { redirect } from "next/navigation";
 
 import { getUserByClerkId } from "@/lib/db/userQueries";
 import Onboarding from "@/components/chat/Onboarding";
-import ChatDashboard from "@/components/chat/ChatDashboard";
 
 import type { User, UserQueryResult } from "@/types/userTypes";
 
-const ChatPage = async () => {
+const OnboardingPage = async () => {
   const clerkUser = await currentUser();
 
   if (!clerkUser) {
@@ -28,10 +27,10 @@ const ChatPage = async () => {
   const user: User = userResult.data;
 
   if (user.onboardingCompleted) {
-    return <ChatDashboard />;
+    redirect("/chat");
   } else {
     return <Onboarding />;
   }
 };
 
-export default ChatPage;
+export default OnboardingPage;

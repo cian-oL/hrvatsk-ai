@@ -16,20 +16,24 @@ const AuthRedirectPage = () => {
   const hasCreatedUser = useRef(false);
 
   useEffect(() => {
-    if (isLoaded && clerkUser && !hasCreatedUser.current) {
-      hasCreatedUser.current = true;
-      const initialData = transformClerkData(clerkUser);
-      createUser(initialData)
-        .then(() => {
-          toast.success("Welcome!");
-          router.push("/chat");
-        })
-        .catch(() => {
-          router.push("/profile?fromAuthRedirect=true");
-          toast.error(
-            "We couldn't create your profile automatically. Please complete your profile details.",
-          );
-        });
+    if (isLoaded && clerkUser) {
+      if (!hasCreatedUser.current) {
+        hasCreatedUser.current = true;
+        const initialData = transformClerkData(clerkUser);
+        createUser(initialData)
+          .then(() => {
+            toast.success("Welcome!");
+            router.push("/chat/onboarding");
+          })
+          .catch(() => {
+            router.push("/profile?fromAuthRedirect=true");
+            toast.error(
+              "We couldn't create your profile automatically. Please complete your profile details.",
+            );
+          });
+      } else {
+        router.push("/chat");
+      }
     }
   }, [isLoaded, clerkUser, createUser, router]);
 

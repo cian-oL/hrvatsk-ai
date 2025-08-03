@@ -17,3 +17,14 @@ export const users = sqliteTable("users", {
     .notNull()
     .default(sql`(CURRENT_TIMESTAMP)`),
 });
+
+export const chats = sqliteTable("chats", {
+  id: text("id").primaryKey(),
+  title: text("title").notNull(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => users.id),
+  createdAt: integer("created_at")
+    .notNull()
+    .default(sql`(CURRENT_TIMESTAMP)`),
+});
