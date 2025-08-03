@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import Image from "next/image";
 
 import { useUpdateUser } from "@/hooks/useUserData";
 import { Button } from "@/components/ui/Button";
@@ -15,6 +16,7 @@ import {
   CardTitle,
 } from "@/components/ui/Card";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import landingImage from "@/../public/Miljenko-and-Dobrila.png";
 
 import type { OnboardingQuestions } from "@/types/userTypes";
 
@@ -32,7 +34,7 @@ const Onboarding = () => {
         "Learn something new",
         "Improve my conversational skills",
         "Improve my grammar",
-        "A bit of fun",
+        "Have some fun",
       ],
     },
     {
@@ -64,17 +66,14 @@ const Onboarding = () => {
 
   const handleSelect = (option: string) => {
     setData({ ...data, [currentQuestion.key]: option });
-    if (step < questions.length - 1) {
-      setStep(step + 1);
-    }
   };
 
   const handleCompleteOnboarding = () => {
     updateUser(
-      { ...data, onboardingCompleted: true },
+      { onboardingQuestions: data, onboardingCompleted: true },
       {
         onSuccess: () => {
-          toast.success("Welcome aboard!");
+          toast.success("Dobro Došli!");
           router.refresh();
         },
         onError: () => {
@@ -85,24 +84,30 @@ const Onboarding = () => {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50">
-      <Card className="w-full max-w-md">
+    <div className="relative flex min-h-screen items-center justify-center md:bg-[url('/Miljenko-and-Dobrila.png')] md:bg-cover md:bg-center">
+      <Image
+        src={landingImage}
+        alt="An Irish Miljenko and Croatian Dobrila meet outside Kastela"
+        className="max-w-3xl md:hidden"
+      />
+      <Card className="absolute w-full max-w-md border-b-2 border-blue-400 bg-gray-200/50 md:inline">
         <CardHeader>
-          <CardTitle>{currentQuestion.question}</CardTitle>
-          <CardDescription>
+          <CardTitle className="font-extrabold text-blue-900">
+            {currentQuestion.question}
+          </CardTitle>
+          <CardDescription className="font-extrabold text-blue-900 italic">
             Step {step + 1} of {questions.length}
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-2">
+        <CardContent className="space-y-2 md:py-4">
           {currentQuestion.options.map((option) => (
             <Button
               key={option}
               variant={
-                data[
-                  currentQuestion.key as keyof OnboardingQuestions
-                ]?.includes(option)
-                  ? "default"
-                  : "outline"
+                data[currentQuestion.key as keyof OnboardingQuestions] ===
+                option
+                  ? "selected"
+                  : "default"
               }
               onClick={() => handleSelect(option)}
               className="w-full justify-start"
