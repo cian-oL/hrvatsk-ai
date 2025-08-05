@@ -24,7 +24,7 @@ import {
   useSidebar,
 } from "@/components/ui/Sidebar";
 import { ChatItem } from "@/components/layout/SidebarHistoryItem";
-import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import { LoaderIcon } from "@/components/common/Icons";
 
 import type { User } from "@/types/userTypes";
 import type { Chat } from "@/types/chatTypes";
@@ -51,6 +51,10 @@ const groupChatsByDate = (chats: Chat[]): GroupedChats => {
 
   return chats.reduce(
     (groups, chat) => {
+      if (!chat.createdAt) {
+        return groups;
+      }
+
       const chatDate = new Date(chat.createdAt);
 
       if (isToday(chatDate)) {
@@ -89,7 +93,9 @@ export const getChatHistoryPaginationKey = (
 
   const firstChatFromPage = previousPageData.chats.at(-1);
 
-  if (!firstChatFromPage) return null;
+  if (!firstChatFromPage) {
+    return null;
+  }
 
   return `/api/history?ending_before=${firstChatFromPage.id}&limit=${PAGE_SIZE}`;
 };
@@ -97,8 +103,8 @@ export const getChatHistoryPaginationKey = (
 const SidebarHistory = ({ user }: { user: User }) => {
   const { setOpenMobile } = useSidebar();
   const router = useRouter();
-  const { id } = useParams();
-  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const { chatId } = useParams();
+  const [deleteChatId, setDeleteChatId] = useState<string | null>(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const {
@@ -111,16 +117,16 @@ const SidebarHistory = ({ user }: { user: User }) => {
     fallbackData: [],
   });
 
-  const hasReachedEnd = paginatedChatHistories
-    ? paginatedChatHistories.some((page) => page.hasMore === false)
-    : false;
+  const hasReachedEnd = paginatedChatHistories?.some(
+    (page) => page.hasMore === false,
+  );
 
-  const hasEmptyChatHistory = paginatedChatHistories
-    ? paginatedChatHistories.every((page) => page.chats.length === 0)
-    : false;
+  const hasEmptyChatHistory = paginatedChatHistories?.every(
+    (page) => page.chats.length === 0,
+  );
 
   const handleDelete = async () => {
-    const deletePromise = fetch(`/api/chat?id=${deleteId}`, {
+    const deletePromise = fetch(`/api/chat?id=${deleteChatId}`, {
       method: "DELETE",
     });
 
@@ -131,7 +137,9 @@ const SidebarHistory = ({ user }: { user: User }) => {
           if (chatHistories) {
             return chatHistories.map((chatHistory) => ({
               ...chatHistory,
-              chats: chatHistory.chats.filter((chat) => chat.id !== deleteId),
+              chats: chatHistory.chats.filter(
+                (chat) => chat.id !== deleteChatId,
+              ),
             }));
           }
         });
@@ -143,7 +151,7 @@ const SidebarHistory = ({ user }: { user: User }) => {
 
     setShowDeleteDialog(false);
 
-    if (deleteId === id) {
+    if (deleteChatId === chatId) {
       router.push("/");
     }
   };
@@ -225,9 +233,9 @@ const SidebarHistory = ({ user }: { user: User }) => {
                           <ChatItem
                             key={chat.id}
                             chat={chat}
-                            isActive={chat.id === id}
+                            isActive={chat.id === chatId}
                             onDelete={(chatId) => {
-                              setDeleteId(chatId);
+                              setDeleteChatId(chatId);
                               setShowDeleteDialog(true);
                             }}
                             setOpenMobile={setOpenMobile}
@@ -245,9 +253,9 @@ const SidebarHistory = ({ user }: { user: User }) => {
                           <ChatItem
                             key={chat.id}
                             chat={chat}
-                            isActive={chat.id === id}
+                            isActive={chat.id === chatId}
                             onDelete={(chatId) => {
-                              setDeleteId(chatId);
+                              setDeleteChatId(chatId);
                               setShowDeleteDialog(true);
                             }}
                             setOpenMobile={setOpenMobile}
@@ -265,9 +273,9 @@ const SidebarHistory = ({ user }: { user: User }) => {
                           <ChatItem
                             key={chat.id}
                             chat={chat}
-                            isActive={chat.id === id}
+                            isActive={chat.id === chatId}
                             onDelete={(chatId) => {
-                              setDeleteId(chatId);
+                              setDeleteChatId(chatId);
                               setShowDeleteDialog(true);
                             }}
                             setOpenMobile={setOpenMobile}
@@ -285,9 +293,9 @@ const SidebarHistory = ({ user }: { user: User }) => {
                           <ChatItem
                             key={chat.id}
                             chat={chat}
-                            isActive={chat.id === id}
+                            isActive={chat.id === chatId}
                             onDelete={(chatId) => {
-                              setDeleteId(chatId);
+                              setDeleteChatId(chatId);
                               setShowDeleteDialog(true);
                             }}
                             setOpenMobile={setOpenMobile}
@@ -305,9 +313,9 @@ const SidebarHistory = ({ user }: { user: User }) => {
                           <ChatItem
                             key={chat.id}
                             chat={chat}
-                            isActive={chat.id === id}
+                            isActive={chat.id === chatId}
                             onDelete={(chatId) => {
-                              setDeleteId(chatId);
+                              setDeleteChatId(chatId);
                               setShowDeleteDialog(true);
                             }}
                             setOpenMobile={setOpenMobile}
@@ -334,7 +342,7 @@ const SidebarHistory = ({ user }: { user: User }) => {
             </div>
           ) : (
             <div className="mt-8 flex flex-row items-center gap-2 p-2 text-zinc-500 dark:text-zinc-400">
-              <LoadingSpinner />
+              <LoaderIcon />
               <div>Loading Chats...</div>
             </div>
           )}

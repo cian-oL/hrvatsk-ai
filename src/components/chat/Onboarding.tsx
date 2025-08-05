@@ -74,7 +74,7 @@ const Onboarding = () => {
       {
         onSuccess: () => {
           toast.success("Dobro Došli!");
-          router.refresh();
+          router.push("/chat");
         },
         onError: () => {
           toast.error("Something went wrong. Please try again.");

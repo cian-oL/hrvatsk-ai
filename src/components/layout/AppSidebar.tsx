@@ -1,11 +1,12 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-
+import Link from "next/link";
 import { SquarePlus } from "lucide-react";
-import SidebarHistory from "@/components/sidebar-history";
-import { SidebarUserNav } from "@/components/sidebar-user-nav";
-import { Button } from "@/components/ui/button";
+
+import SidebarHistory from "@/components/layout/SidebarHistory";
+import { SidebarUserNav } from "@/components/layout/SidebarUserNav";
+import { Button } from "@/components/ui/Button";
 import {
   Sidebar,
   SidebarContent,
@@ -14,8 +15,11 @@ import {
   SidebarMenu,
   useSidebar,
 } from "@/components/ui/Sidebar";
-import Link from "next/link";
-import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/Tooltip";
 import { useGetUser } from "@/hooks/useUserData";
 
 const AppSidebar = () => {
@@ -48,7 +52,7 @@ const AppSidebar = () => {
                   className="h-fit p-2"
                   onClick={() => {
                     setOpenMobile(false);
-                    router.push("/");
+                    router.push("/chat");
                     router.refresh();
                   }}
                 >
@@ -60,9 +64,7 @@ const AppSidebar = () => {
           </div>
         </SidebarMenu>
       </SidebarHeader>
-      <SidebarContent>
-        <SidebarHistory user={user} />
-      </SidebarContent>
+      <SidebarContent>{user && <SidebarHistory user={user} />}</SidebarContent>
       <SidebarFooter>{user && <SidebarUserNav user={user} />}</SidebarFooter>
     </Sidebar>
   );

@@ -1,5 +1,76 @@
-const SidebarHistoryItem = () => {
-  return <div>SidebarHistoryItem</div>;
+import { memo } from "react";
+import Link from "next/link";
+
+import {
+  SidebarMenuAction,
+  SidebarMenuButton,
+  SidebarMenuItem,
+} from "@/components/ui/Sidebar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSub,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from "@/components/ui/DropdownMenu";
+import {
+  MoreHorizontalIcon,
+  ShareIcon,
+  TrashIcon,
+} from "@/components/common/Icons";
+
+import type { Chat } from "@/types/chatTypes";
+
+const PureChatItem = ({
+  chat,
+  isActive,
+  onDelete,
+  setOpenMobile,
+}: {
+  chat: Chat;
+  isActive: boolean;
+  onDelete: (chatId: string) => void;
+  setOpenMobile: (open: boolean) => void;
+}) => {
+  return (
+    <SidebarMenuItem>
+      <SidebarMenuButton asChild isActive={isActive}>
+        <Link href={`/chat/${chat.id}`} onClick={() => setOpenMobile(false)}>
+          <span>{chat.title}</span>
+        </Link>
+      </SidebarMenuButton>
+      <DropdownMenu modal={true}>
+        <DropdownMenuTrigger asChild>
+          <SidebarMenuAction
+            className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground mr-0.5"
+            showOnHover={!isActive}
+          >
+            <MoreHorizontalIcon />
+            <span className="sr-only">More</span>
+          </SidebarMenuAction>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent side="bottom" align="end">
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger className="cursor-pointer">
+              <ShareIcon />
+              <span>Share</span>
+            </DropdownMenuSubTrigger>
+          </DropdownMenuSub>
+          <DropdownMenuItem
+            className="text-destructive focus:bg-destructive/15 focus:text-destructive cursor-pointer dark:text-red-500"
+            onSelect={() => onDelete(chat.id)}
+          >
+            <TrashIcon />
+            <span>Delete</span>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </SidebarMenuItem>
+  );
 };
 
-export default SidebarHistoryItem;
+export const ChatItem = memo(PureChatItem, (prevProps, nextProps) => {
+  if (prevProps.isActive !== nextProps.isActive) return false;
+  return true;
+});
