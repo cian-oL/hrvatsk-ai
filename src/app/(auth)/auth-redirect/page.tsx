@@ -23,7 +23,7 @@ const AuthRedirectPage = () => {
         createUser(initialData)
           .then(() => {
             toast.success("Welcome!");
-            router.push("/chat/onboarding");
+            router.push("/onboarding");
           })
           .catch(() => {
             router.push("/profile?fromAuthRedirect=true");
