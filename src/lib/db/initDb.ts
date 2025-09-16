@@ -1,4 +1,4 @@
-import { migrate } from "drizzle-orm/libsql/migrator";
+import { migrate } from "drizzle-orm/neon-http/migrator";
 
 import { db } from "./db";
 
@@ -8,16 +8,22 @@ export const initializeDatabase = async (): Promise<void> => {
     console.log("Running DB migrations...");
     await migrate(db, { migrationsFolder: "./drizzle" });
     console.log("Database schema is up to date");
-  } catch (err: any) {
-    if (err?.message?.includes("already exists")) {
+  } catch (error: unknown) {
+    const err = error as { message?: string };
+
+    if (
+      typeof err.message === "string" &&
+      (err?.message?.includes("already exists") ||
+        err?.message?.includes("relation already exists"))
+    ) {
       console.log("Tables already exist, skipping migrations");
     } else {
-      console.error("Failed to run migrations:", err);
+      console.error("Failed to run migrations:", error);
 
       if (process.env.NODE_ENV !== "production") {
-        throw err;
+        throw error;
       } else {
-        console.warn("Continuing despite DB error (production mode)");
+        console.warn("Continuing despite database error (production mode)");
       }
     }
   }

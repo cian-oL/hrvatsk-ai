@@ -1,19 +1,24 @@
-import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
-import { sql } from "drizzle-orm";
+import { OnboardingQuestions } from "@/types/userTypes";
+import {
+  pgTable,
+  text,
+  serial,
+  timestamp,
+  boolean,
+  jsonb,
+} from "drizzle-orm/pg-core";
 
-export const users = sqliteTable("users", {
-  id: text("id").primaryKey(),
+export const users = pgTable("users", {
+  id: serial("id").primaryKey(),
   clerkId: text("clerk_id").notNull().unique(),
   email: text("email").notNull().unique(),
   userName: text("username"),
   firstName: text("first_name"),
   lastName: text("last_name"),
-  onboardingCompleted: integer("onboarding_completed").default(0),
-  onboardingQuestions: text("onboarding_questions"),
-  createdAt: integer("created_at")
-    .notNull()
-    .default(sql`(CURRENT_TIMESTAMP)`),
-  updatedAt: integer("updated_at")
-    .notNull()
-    .default(sql`(CURRENT_TIMESTAMP)`),
+  onboardingCompleted: boolean("onboarding_completed").default(false),
+  onboardingQuestions: jsonb(
+    "onboarding_questions",
+  ).$type<OnboardingQuestions>(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });

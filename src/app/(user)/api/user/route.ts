@@ -32,7 +32,6 @@ export const POST = async (req: NextRequest) => {
     }
 
     const newUser = {
-      id: crypto.randomUUID(),
       clerkId,
       email,
       userName: userName || null,
@@ -112,9 +111,9 @@ export const PATCH = async (req: NextRequest) => {
     for (const field of allowedUpdateFields) {
       if (field in body && body[field] !== undefined) {
         if (field === "onboardingQuestions") {
-          updates[field] = JSON.stringify(body[field]);
+          updates[field] = body[field];
         } else if (field === "onboardingCompleted") {
-          updates[field] = body[field] ? 1 : 0;
+          updates[field] = !!body[field];
         } else {
           updates[field] = body[field];
         }
@@ -124,7 +123,7 @@ export const PATCH = async (req: NextRequest) => {
     if (Object.keys(updates).length === 0) {
       return new NextResponse("No valid fields to update", { status: 400 });
     }
-    updates.updatedAt = new Date().toISOString();
+    updates.updatedAt = new Date();
 
     await db.update(users).set(updates).where(eq(users.clerkId, clerkId));
 
