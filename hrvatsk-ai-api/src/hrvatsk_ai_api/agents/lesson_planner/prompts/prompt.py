@@ -1,5 +1,4 @@
 from .agent import SYSTEM_PROMPT
-from .summary import EXTEND_SUMMARY_PROMPT, SUMMARY_PROMPT
 
 
 class Prompt:
@@ -15,7 +14,3 @@ class Prompt:
 
 
 system_prompt = Prompt(name="agent_system_prompt", prompt=SYSTEM_PROMPT)
-summary_prompt = Prompt(name="summary_prompt", prompt=SUMMARY_PROMPT)
-extend_summary_prompt = Prompt(
-    name="extend_summary_prompt", prompt=EXTEND_SUMMARY_PROMPT
-)
