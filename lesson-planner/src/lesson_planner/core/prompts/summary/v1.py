@@ -9,7 +9,7 @@ Summarization Prompts for the Agent.
 SUMMARY_PROMPT = """
 Create a summary of the conversation between the agent and the user.
 The summary must be a short description of the conversation so far, but that also captures all the
-relevant information shared between Satoshi and the user:
+relevant information shared between the agent and the user:
 """
 
 EXTEND_SUMMARY_PROMPT = """

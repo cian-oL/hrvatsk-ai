@@ -1,5 +1,5 @@
-from core.prompts.agent.v1 import SYSTEM_PROMPT
-from core.prompts.summary.v1 import EXTEND_SUMMARY_PROMPT, SUMMARY_PROMPT
+from .agent import SYSTEM_PROMPT
+from .summary import EXTEND_SUMMARY_PROMPT, SUMMARY_PROMPT
 
 
 class Prompt:

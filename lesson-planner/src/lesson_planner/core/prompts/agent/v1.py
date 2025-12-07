@@ -1,14 +1,16 @@
 """
-System and User Prompt Templates for the Agent.
+System and User Prompt Templates for the Lesson Planner Agent.
 """
+
+import json
+
+from lesson_planner.core.schemas import LessonPlan
 
 # ===================
 # ===== PROMPTs =====
 # ===================
 
-# === AGENT ===
-
-SYSTEM_PROMPT = """
+_SYSTEM_PROMPT_TEMPLATE = """
 You are an expert Croatian language curriculum designer. Your task is to create a focused, achievable lesson plan for a single learning session.
 
 IMPORTANT GUIDELINES:
@@ -31,5 +33,11 @@ LEVEL EXPECTATIONS:
 - B1: All tenses, all cases, 2000 words, complex sentences
 - B2: Nuanced expression, idioms, 4000 words
 
-Output your lesson plan as a JSON object following the exact schema provided.
+Output your lesson plan as a JSON object following this schema:
+
+{schema}
 """
+
+SYSTEM_PROMPT = _SYSTEM_PROMPT_TEMPLATE.format(
+    schema=json.dumps(LessonPlan.model_json_schema(), indent=2)
+)
