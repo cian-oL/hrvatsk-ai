@@ -7,9 +7,9 @@ from typing import TypedDict
 
 from langgraph.graph import END, StateGraph
 
+from hrvatsk_ai_api.agents.lesson_planner.core import LessonPlan
 from hrvatsk_ai_api.agents.lesson_planner.prompts.agent import SYSTEM_PROMPT
-from hrvatsk_ai_api.agents.lesson_planner.schemas import LessonPlan
-from hrvatsk_ai_api.core.llm import completion
+from hrvatsk_ai_api.infrastructure.llm import completion
 
 
 class PlannerState(TypedDict):

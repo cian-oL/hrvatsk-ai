@@ -4,7 +4,7 @@ System and User Prompt Templates for the Lesson Planner Agent.
 
 import json
 
-from hrvatsk_ai_api.agents.lesson_planner.schemas import LessonPlan
+from hrvatsk_ai_api.agents.lesson_planner.core import LessonPlan
 
 # ===================
 # ===== PROMPTs =====
