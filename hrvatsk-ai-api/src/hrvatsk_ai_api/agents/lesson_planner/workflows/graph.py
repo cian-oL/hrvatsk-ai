@@ -9,36 +9,32 @@ from langgraph.graph import END, StateGraph
 
 from hrvatsk_ai_api.agents.lesson_planner.core import LessonPlan
 from hrvatsk_ai_api.agents.lesson_planner.prompts.agent import SYSTEM_PROMPT
+from hrvatsk_ai_api.agents.lesson_planner.workflows.state import LessonPlannerState
 from hrvatsk_ai_api.infrastructure.llm import completion
 
 
-class PlannerState(TypedDict):
-    """State for the lesson planner graph."""
+def generate_lesson_plan(state: LessonPlannerState) -> LessonPlannerState:
+    """
+    Call LLM to generate a lesson plan.
 
-    # Input
-    user_level: str
-    time_allocation_minutes: int
-    focus_preference: str
+    Args:
+        state (LessonPlannerState)
 
-    # Output
-    lesson_plan: LessonPlan | None
-    raw_response: str | None
-    error: str | None
+    """
 
+    user_prompt = f"""
+    Create a lesson plan for the following learner:
 
-def generate_lesson_plan(state: PlannerState) -> PlannerState:
-    """Call LLM to generate a lesson plan."""
-    user_prompt = f"""Create a lesson plan for the following learner:
+    LEARNER PROFILE:
+    - Current Level: {state["user_level"]}
+    - Native Language: English
 
-LEARNER PROFILE:
-- Current Level: {state["user_level"]}
-- Native Language: English
+    SESSION PARAMETERS:
+    - Time Available: {state["time_allocation_minutes"]} minutes
+    - Focus Preference: {state["focus_preference"]}
 
-SESSION PARAMETERS:
-- Time Available: {state["time_allocation_minutes"]} minutes
-- Focus Preference: {state["focus_preference"]}
-
-Generate a complete lesson plan following the schema provided."""
+    Generate a complete lesson plan following the schema provided.
+    """
 
     messages = [
         {"role": "system", "content": SYSTEM_PROMPT},
@@ -70,7 +66,7 @@ Generate a complete lesson plan following the schema provided."""
 
 def build_graph() -> StateGraph:
     """Build and compile the lesson planner graph."""
-    graph = StateGraph(PlannerState)
+    graph = StateGraph(LessonPlannerState)
 
     graph.add_node("generate", generate_lesson_plan)
 
