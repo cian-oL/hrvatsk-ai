@@ -10,8 +10,8 @@ import json
 
 from dotenv import load_dotenv
 
-from hrvatsk_ai_api.agents.lesson_planner.graph import lesson_planner_graph
-from hrvatsk_ai_api.agents.lesson_planner.schemas import LessonPlan
+from hrvatsk_ai_api.agents.lesson_planner.core import LessonPlan
+from hrvatsk_ai_api.agents.lesson_planner.workflows.graph import lesson_planner_graph
 
 # Load .env from project root
 load_dotenv("../.env")

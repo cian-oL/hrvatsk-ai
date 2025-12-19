@@ -15,7 +15,7 @@ class Settings(BaseSettings):
     )
 
     # LLM Configuration
-    groq_api_key: str
+    openai_api_key: str
     llm_model: str = "groq/llama-3.3-70b-versatile"
 
 

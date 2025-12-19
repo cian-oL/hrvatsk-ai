@@ -2,7 +2,7 @@
 LLM client using LiteLLM for provider-agnostic completions.
 """
 
-from litellm import completion as litellm_completion
+from litellm import litellm
 
 from hrvatsk_ai_api.config import settings
 
@@ -27,11 +27,14 @@ def completion(
         "model": settings.llm_model,
         "messages": messages,
         "temperature": temperature,
-        "api_key": settings.groq_api_key,
+        "api_key": settings.openai_api_key,
     }
 
     if response_format:
         kwargs["response_format"] = response_format
 
-    response = litellm_completion(**kwargs)
+    # Drop unsupported OpenAI params
+    litellm.drop_params = True
+
+    response = litellm.completion(**kwargs)
     return response.choices[0].message.content

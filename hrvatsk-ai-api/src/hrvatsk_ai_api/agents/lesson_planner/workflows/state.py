@@ -24,4 +24,3 @@ class LessonPlannerState(TypedDict):
     lesson_plan: LessonPlan | None
     raw_response: str | None
     error: str | None
-    error: str | None
