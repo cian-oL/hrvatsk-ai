@@ -18,5 +18,8 @@ class Settings(BaseSettings):
     openai_api_key: str
     llm_model: str = "groq/llama-3.3-70b-versatile"
 
+    # Frontend origin
+    frontend_base_url: str
+
 
 settings = Settings()
