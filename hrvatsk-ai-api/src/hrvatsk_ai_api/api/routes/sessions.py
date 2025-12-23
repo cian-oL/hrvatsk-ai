@@ -2,10 +2,12 @@
 Sessions API routes.
 """
 
-import uuid
 from datetime import datetime, timezone
+from uuid import UUID
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from hrvatsk_ai_api.agents.lesson_planner.workflows.graph import lesson_planner_graph
 from hrvatsk_ai_api.api.schemas.sessions import (
@@ -13,15 +15,31 @@ from hrvatsk_ai_api.api.schemas.sessions import (
     CreateSessionResponse,
     SessionResponse,
 )
+from hrvatsk_ai_api.infrastructure.database import Session as SessionModel
+from hrvatsk_ai_api.infrastructure.database import SessionStatus, User, get_session
 
 router = APIRouter(prefix="/sessions", tags=["sessions"])
 
-# In-memory session store
-_sessions: dict[str, dict] = {}
+
+async def get_or_create_dev_user(db: AsyncSession) -> User:
+    """Get or create a development user. Replace with Clerk auth later."""
+    dev_clerk_id = "dev_user_001"
+    result = await db.execute(select(User).where(User.clerk_id == dev_clerk_id))
+    user = result.scalar_one_or_none()
+
+    if not user:
+        user = User(clerk_id=dev_clerk_id, current_level="A1")
+        db.add(user)
+        await db.flush()
+
+    return user
 
 
 @router.post("", response_model=CreateSessionResponse, status_code=201)
-async def create_session(request: CreateSessionRequest) -> CreateSessionResponse:
+async def create_session(
+    request: CreateSessionRequest,
+    db: AsyncSession = Depends(get_session),
+) -> CreateSessionResponse:
     """
     Start a new learning session.
     Creates a session and generates a lesson plan using the Lesson Planner agent.
@@ -32,13 +50,12 @@ async def create_session(request: CreateSessionRequest) -> CreateSessionResponse
     Returns:
         Session data with generated lesson plan (CreateSessionResponse).
     """
-
-    session_id = str(uuid.uuid4())
+    user = await get_or_create_dev_user(db)
     started_at = datetime.now(timezone.utc)
 
     # Run the lesson planner
     initial_state = {
-        "user_level": "A1",  # TODO: Get from user profile once auth is set up
+        "user_level": user.current_level,
         "time_allocation_minutes": request.time_allocation_minutes,
         "focus_preference": request.focus_preference,
         "lesson_plan": None,
@@ -54,21 +71,23 @@ async def create_session(request: CreateSessionRequest) -> CreateSessionResponse
             detail=f"Failed to generate lesson plan: {result['error']}",
         )
 
-    # Store session
-    session_data = {
-        "id": session_id,
-        "status": "active",
-        "time_allocation_minutes": request.time_allocation_minutes,
-        "started_at": started_at.isoformat(),
-        "lesson_plan": result["lesson_plan"],
-    }
-
-    _sessions[session_id] = session_data
+    # Create session in database
+    session = SessionModel(
+        user_id=user.id,
+        status=SessionStatus.ACTIVE,
+        time_allocation_minutes=request.time_allocation_minutes,
+        started_at=started_at,
+        lesson_plan=result["lesson_plan"].model_dump()
+        if result["lesson_plan"]
+        else None,
+    )
+    db.add(session)
+    await db.flush()
 
     return CreateSessionResponse(
         success=True,
         data=SessionResponse(
-            id=session_id,
+            id=str(session.id),
             status="active",
             time_allocation_minutes=request.time_allocation_minutes,
             started_at=started_at.isoformat(),
@@ -79,29 +98,34 @@ async def create_session(request: CreateSessionRequest) -> CreateSessionResponse
 
 
 @router.get("/{session_id}", response_model=CreateSessionResponse)
-async def get_session(session_id: str) -> CreateSessionResponse:
+async def get_session_by_id(
+    session_id: UUID,
+    db: AsyncSession = Depends(get_session),
+) -> CreateSessionResponse:
     """
     Get session details and lesson plan.
 
     Args:
-        session_id (str): UUID of the session to retrieve
+        session_id (UUID): UUID of the session to retrieve
 
     Returns:
         Session data with lesson plan if available
     """
+    result = await db.execute(select(SessionModel).where(SessionModel.id == session_id))
+    session = result.scalar_one_or_none()
 
-    if session_id not in _sessions:
+    if not session:
         raise HTTPException(status_code=404, detail="Session not found")
-
-    session_data = _sessions[session_id]
 
     return CreateSessionResponse(
         success=True,
         data=SessionResponse(
-            id=session_data["id"],
-            status=session_data["status"],
-            time_allocation_minutes=session_data["time_allocation_minutes"],
-            started_at=session_data["started_at"],
-            lesson_plan=session_data["lesson_plan"],
+            id=str(session.id),
+            status=session.status.value
+            if hasattr(session.status, "value")
+            else session.status,
+            time_allocation_minutes=session.time_allocation_minutes,
+            started_at=session.started_at.isoformat() if session.started_at else "",
+            lesson_plan=session.lesson_plan,
         ),
     )

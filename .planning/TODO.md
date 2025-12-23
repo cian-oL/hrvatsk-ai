@@ -1,6 +1,6 @@
 # Hrvatsk-AI TODO
 
-## Current Sprint: FastAPI Routes & API Layer
+## Current Sprint: Database Integration
 
 ### Completed
 
@@ -12,6 +12,14 @@
 - [x] Create GET /sessions/:id endpoint
 - [x] Add health check endpoint
 - [x] Test the API endpoints
+- [x] Set up SQLAlchemy with async support (asyncpg)
+- [x] Create User and Session database models
+- [x] Initialize Alembic for migrations
+- [x] Integrate database into sessions router
+
+### In Progress
+
+- [ ] Run migrations and test with real PostgreSQL database
 
 ## Backlog
 
@@ -22,8 +30,8 @@
 
 ### Database
 
-- [ ] Set up database models (SQLAlchemy/Drizzle)
-- [ ] Migrations with Alembic
+- [ ] Vocabulary and grammar models
+- [ ] User vocabulary progress tracking
 
 ### Auth
 
