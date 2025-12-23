@@ -21,5 +21,8 @@ class Settings(BaseSettings):
     # Frontend origin
     frontend_base_url: str
 
+    # Database
+    database_url: str
+
 
 settings = Settings()
