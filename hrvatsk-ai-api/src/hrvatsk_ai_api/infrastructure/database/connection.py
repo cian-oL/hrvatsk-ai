@@ -57,3 +57,10 @@ async def init_db() -> None:
 
     async with engine.begin() as conn:
         await conn.run_sync(lambda _: None)
+
+
+async def dispose_db() -> None:
+    """
+    Dispose database engine and close all pooled connections.
+    """
+    await engine.dispose()
