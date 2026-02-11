@@ -19,7 +19,7 @@
 
 ### In Progress
 
-- [ ] Run migrations and test with real PostgreSQL database
+- [x] Run migrations and test with real PostgreSQL database
 
 ## Backlog
 
